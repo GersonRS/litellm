@@ -1,0 +1,55 @@
+model_list:
+  - model_name: qwen3-32b
+    litellm_params:
+      model: hosted_vllm/Qwen/Qwen2.5-Coder-7B
+      api_base: http://qwen-compass.mglu.io/v1
+      api_key: none
+      rpm: 1440
+    model_info:
+      supports_reasoning: True
+  - model_name: mistral7b
+    litellm_params:
+      model: hosted_vllm/mistralai/Mistral-7B-Instruct-v0.3
+      api_base: https://llm-inference-compass.mglu.io/v1
+      api_key: none
+  - model_name: llama
+    litellm_params:
+      model: hosted_vllm/meta-llama/Llama-3.2-11B-Vision-Instruct
+      api_base: https://llama-compass-homolog.mglu.io/v1
+      api_key: none
+  - model_name: deepseek
+    litellm_params:
+      model: hosted_vllm/deepseek-ai/DeepSeek-R1-Distill-Qwen-14B
+      api_base: https://deepseek-compass.mglu.io/v1
+      api_key: none
+
+general_settings:
+  # enable_jwt_auth: True
+  # litellm_jwtauth:
+  #   user_email_jwt_field: "email"
+  #   user_id_upsert: true
+  master_key: sk-tVGXJstfKGEQu66GTuWg7CrkDeRyzufGk075i45tuD9HkY7Zb9RocgphjkAHrrkhtiNFzcVCABitomzdLWcd6DgZxH6swEG55C4y # digite sua própria chave mestra, certifique-se de que ela comece com 'sk-'
+  proxy_batch_write_at: 60 # Atualizações de gastos de gravação em lote a cada 60 segundos
+  database_connection_pool_limit: 10 # limitar o número de conexões de banco de dados para = Número MÁXIMO de conexões de banco de dados/Número de instâncias do proxy litellm (cerca de 10-20 é um bom número)
+  disable_spend_logs: True # Desative a gravação de cada transação no banco de dados. Recomendamos fazer isso caso você não precise ver o Uso na interface do LiteLLM e esteja rastreando métricas via Prometheus.
+  disable_error_logs: True # desativar a gravação de exceções LLM no banco de dados
+  allow_requests_on_db_unavailable: True # USE somente ao executar o LiteLLM na sua VPC. Permita que as solicitações continuem sendo processadas mesmo que o banco de dados esteja indisponível. Recomendamos fazer isso se você estiver executando o LiteLLM em uma VPC que não pode ser acessada pela internet pública.
+  background_health_checks: False
+  user_header_name: X-OpenWebUI-User-Id
+  store_model_in_db: true
+  store_prompts_in_spend_logs: true
+  database_url: "postgresql://llmproxy:dbpassword9090@localhost:5432/litellm"
+
+router_settings:
+  enable_pre_call_checks: true 
+
+litellm_settings:
+  store_audit_logs: true # Armazena logs de auditoria de chamadas LLM no banco de dados
+  ssl_verify: false
+  success_callback: ["langfuse"]
+  failure_callback: ["langfuse"]
+  request_timeout: 600    # gera um erro de tempo limite se a chamada demorar mais de 600 segundos. O valor padrão é 6000 segundos se não for definido.
+  set_verbose: False      # Desligue o registro de depuração e certifique-se de que seus registros não tenham nenhuma depuração ativada
+  json_logs: true         # Obter logs de depuração em formato json
+  default_internal_user_params:
+    available_teams: ["1eb0963c-332c-46c6-84cb-e81fd31cc2b2", "28253132-c836-4e7c-82a2-2c2ed6e5be85", "84dc6845-fff0-4165-9ad7-16762ce7ac26", "101e6e0b-cd5f-49c1-81af-efb17b53d0bd"]
